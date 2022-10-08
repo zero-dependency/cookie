@@ -1,6 +1,6 @@
 {
-  "name": "@zero-dependency/tmp",
-  "version": "0.0.0",
+  "name": "@zero-dependency/cookie",
+  "version": "1.2.0",
   "type": "module",
   "types": "./dist/index.d.ts",
   "main": "./dist/index.umd.js",
