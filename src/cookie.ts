@@ -18,6 +18,10 @@ export class Cookie {
     this.deserialize = (value) => {
       return options?.deserialize ? options.deserialize(value) : value
     }
+
+    if (options?.attributes) {
+      this.withAttributes(options.attributes)
+    }
   }
 
   withAttributes(attributes: Omit<CookieAttributes, 'max-age'>): void {
@@ -78,18 +82,3 @@ export class Cookie {
     this.set(name, '', { ...attributes, expires: -1 })
   }
 }
-
-/** JSON serialize/deserialize */
-export const cookies = new Cookie({
-  serialize(value) {
-    return JSON.stringify(value)
-  },
-  deserialize(value) {
-    try {
-      return JSON.parse(value)
-    } catch (err) {
-      if (import.meta.env.PROD) console.error(err)
-      return null
-    }
-  }
-})

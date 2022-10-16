@@ -1,7 +1,20 @@
 import { describe, expect } from 'vitest'
-import { Cookie, cookies } from '../src/index.js'
+import { Cookie } from '../src/index.js'
 
 describe('@zero-dependency/cookie', (test) => {
+  const cookie = new Cookie({
+    serialize(value) {
+      return JSON.stringify(value)
+    },
+    deserialize(value) {
+      try {
+        return JSON.parse(value)
+      } catch {
+        return null
+      }
+    }
+  })
+
   const user = {
     id: 1,
     name: 'John'
@@ -16,24 +29,24 @@ describe('@zero-dependency/cookie', (test) => {
 
   test('set', () => {
     expect(document.cookie).toBe('')
-    cookies.set('user', user, { maxAge: 7 })
+    cookie.set('user', user, { maxAge: 7 })
     expect(document.cookie).toBe(
       'user=%7B%22id%22%3A1%2C%22name%22%3A%22John%22%7D'
     )
   })
 
   test('get', () => {
-    expect(cookies.get('user')).toMatchObject(user)
-    expect(cookies.get('unknown')).toBeNull()
+    expect(cookie.get('user')).toMatchObject(user)
+    expect(cookie.get('unknown')).toBeNull()
 
     document.cookie = 'empty='
     document.cookie = 'bad=%7B'
-    expect(cookies.get('empty')).toBeNull()
-    expect(cookies.get('bad')).toBeNull()
+    expect(cookie.get('empty')).toBeNull()
+    expect(cookie.get('bad')).toBeNull()
   })
 
   test('list', () => {
-    expect(cookies.list()).toEqual({
+    expect(cookie.list()).toEqual({
       user,
       empty: null,
       bad: null
@@ -41,14 +54,14 @@ describe('@zero-dependency/cookie', (test) => {
   })
 
   test('delete', () => {
-    cookies.delete('bad')
-    cookies.delete('empty')
-    cookies.delete('user')
+    cookie.delete('bad')
+    cookie.delete('empty')
+    cookie.delete('user')
     expect(document.cookie).toBe('')
   })
 
   test('withAttributes', () => {
-    cookies.withAttributes({
+    cookie.withAttributes({
       path: '/',
       domain: '.example.com'
     })

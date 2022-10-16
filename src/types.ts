@@ -18,6 +18,11 @@ export interface CookieOptions {
    * }
    */
   deserialize: Deserialize
+
+  /**
+   * Cookie attribute defaults can be set globally
+   */
+  attributes?: Omit<CookieAttributes, 'max-age'>
 }
 
 export interface CookieAttributes {
