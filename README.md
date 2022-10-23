@@ -1,7 +1,8 @@
 # @zero-dependency/cookie
 
-[![](https://img.shields.io/npm/v/@zero-dependency/cookie)](https://npm.im/@zero-dependency/cookie)
-![](https://img.shields.io/npm/l/@zero-dependency/cookie)
+[![npm version](https://img.shields.io/npm/v/@zero-dependency/cookie)](https://npm.im/@zero-dependency/cookie)
+[![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@zero-dependency/cookie)](https://bundlephobia.com/package/@zero-dependency/cookie@latest)
+![npm license](https://img.shields.io/npm/l/@zero-dependency/cookie)
 
 ## Installation
 
