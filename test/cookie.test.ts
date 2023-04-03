@@ -1,7 +1,26 @@
 import { describe, expect } from 'vitest'
 import { Cookie } from '../src/index.js'
 
-describe('@zero-dependency/cookie', (test) => {
+describe('Cookie', (test) => {
+  // uncovered lines in src/cookie.ts:22-24
+  const withAttributes = new Cookie({
+    serialize(value) {
+      return JSON.stringify(value)
+    },
+    deserialize(value) {
+      try {
+        return JSON.parse(value)
+      } catch {
+        return null
+      }
+    },
+    attributes: {
+      path: '/',
+      domain: '.example.com'
+    }
+  })
+  // uncovered lines in src/cookie.ts:22-24
+
   const cookie = new Cookie({
     serialize(value) {
       return JSON.stringify(value)
