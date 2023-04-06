@@ -21,7 +21,9 @@ pnpm add @zero-dependency/cookie
 ## Usage
 
 ```js
-import { cookies } from '@zero-dependency/cookie'
+import { Cookie } from '@zero-dependency/cookie'
+
+const cookies = new Cookie(/* options */)
 
 // Create a cookie.
 cookies.set('name', 'value')
