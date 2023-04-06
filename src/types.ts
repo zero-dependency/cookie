@@ -7,7 +7,7 @@ export interface CookieOptions {
    * @default
    * return JSON.stringify(value)
    */
-  encode: Encode
+  encode?: Encode
 
   /**
    * @default
@@ -18,7 +18,7 @@ export interface CookieOptions {
    *   return null
    * }
    */
-  decode: Decode
+  decode?: Decode
 
   /**
    * Cookie attribute defaults can be set globally
