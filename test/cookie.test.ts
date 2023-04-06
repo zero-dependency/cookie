@@ -43,7 +43,7 @@ describe('Cookie', (test) => {
     const cookie = new Cookie()
     cookie.set('foo', 1)
     expect(cookie.get('foo')).toBe('1')
-    cookie.delete('foo')
+    cookie.remove('foo')
   })
 
   test('set', () => {
@@ -72,10 +72,10 @@ describe('Cookie', (test) => {
     })
   })
 
-  test('delete', () => {
-    cookie.delete('bad')
-    cookie.delete('empty')
-    cookie.delete('user')
+  test('remove', () => {
+    cookie.remove('bad')
+    cookie.remove('empty')
+    cookie.remove('user')
     expect(document.cookie).toBe('')
   })
 

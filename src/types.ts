@@ -26,9 +26,12 @@ export interface CookieOptions {
   attributes?: Omit<CookieAttributes, 'max-age'>
 }
 
-export interface CookieAttributes {
+export interface CookieDomainAttributes {
   path?: string
   domain?: string
+}
+
+export interface CookieAttributes extends CookieDomainAttributes {
   expires?: Date | number | string
   secure?: boolean
   maxAge?: number

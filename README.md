@@ -40,13 +40,13 @@ cookies.get('name')
 // Read all visible cookies.
 cookies.list()
 
-// Delete cookie.
-cookies.delete('name')
+// Remove cookie.
+cookies.remove('name')
 
-// Delete a cookie valid to the path of the current page.
-cookies.set('name', 'value', { path: '' })
-cookies.delete('name'); // fail!
-cookies.delete('name', { path: '' }); // success!
+// Remove a cookie valid to the path of the current page.
+cookies.set('name', 'value', { path: '/some-path' })
+cookies.remove('name'); // fail!
+cookies.remove('name', { path: '/some-path' }); // success!
 
 // Cookie attribute defaults can be set globally.
 cookies.withAttributes({ path: '/', domain: '.example.com' })

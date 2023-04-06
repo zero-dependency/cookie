@@ -1,5 +1,6 @@
 import type {
   CookieAttributes,
+  CookieDomainAttributes,
   CookieOptions,
   Decode,
   Encode
@@ -98,11 +99,11 @@ export class Cookie {
   }
 
   /**
-   * Delete cookie
+   * Remove cookie
    * @param name cookie name
-   * @param attributes cookie attributes
+   * @param attributes cookie domain attributes
    */
-  delete(name: string, attributes?: CookieAttributes): void {
-    this.set(name, '', { ...attributes, expires: -1 })
+  remove(name: string, attributes?: CookieDomainAttributes): void {
+    this.set(name, '', { ...attributes, expires: -1, maxAge: -1 })
   }
 }
