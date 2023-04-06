@@ -1,12 +1,13 @@
-export type Serialize = (value: any) => string | number | boolean
-export type Deserialize = (value: string) => any
+export type Encode = (value: any) => string
+export type Decode = (value: string) => any
 
 export interface CookieOptions {
   /**
+   * Encode value before setting cookie
    * @default
    * return JSON.stringify(value)
    */
-  serialize: Serialize
+  encode: Encode
 
   /**
    * @default
@@ -17,7 +18,7 @@ export interface CookieOptions {
    *   return null
    * }
    */
-  deserialize: Deserialize
+  decode: Decode
 
   /**
    * Cookie attribute defaults can be set globally

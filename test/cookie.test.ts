@@ -4,10 +4,10 @@ import { Cookie } from '../src/index.js'
 describe('Cookie', (test) => {
   // uncovered lines in src/cookie.ts:22-24
   const withAttributes = new Cookie({
-    serialize(value) {
+    encode(value) {
       return JSON.stringify(value)
     },
-    deserialize(value) {
+    decode(value) {
       try {
         return JSON.parse(value)
       } catch {
@@ -22,10 +22,10 @@ describe('Cookie', (test) => {
   // uncovered lines in src/cookie.ts:22-24
 
   const cookie = new Cookie({
-    serialize(value) {
+    encode(value) {
       return JSON.stringify(value)
     },
-    deserialize(value) {
+    decode(value) {
       try {
         return JSON.parse(value)
       } catch {

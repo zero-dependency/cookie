@@ -1,22 +1,22 @@
 import type {
   CookieAttributes,
   CookieOptions,
-  Deserialize,
-  Serialize
+  Decode,
+  Encode
 } from './types.js'
 
 export class Cookie {
-  private serialize: Serialize
-  private deserialize: Deserialize
-  private attributes: CookieAttributes
+  #encode: Encode
+  #decode: Decode
+  #attributes: CookieAttributes
 
   constructor(options?: CookieOptions) {
-    this.serialize = (value) => {
-      return options?.serialize ? options.serialize(value) : value
+    this.#encode = (value) => {
+      return options?.encode ? options.encode(value) : value
     }
 
-    this.deserialize = (value) => {
-      return options?.deserialize ? options.deserialize(value) : value
+    this.#decode = (value) => {
+      return options?.decode ? options.decode(value) : value
     }
 
     if (options?.attributes) {
@@ -24,19 +24,34 @@ export class Cookie {
     }
   }
 
+  /**
+   * Cookie attribute defaults can be set globally
+   * @param attributes cookie attributes
+   */
   withAttributes(attributes: Omit<CookieAttributes, 'max-age'>): void {
-    this.attributes = { ...this.attributes, ...attributes }
+    this.#attributes = { ...this.#attributes, ...attributes }
   }
 
-  get<T = string>(name: string): T | null {
+  /**
+   * Get cookie value
+   * @param name cookie name
+   * @returns cookie value
+   */
+  get<T>(name: string): T | null {
     const cookie = `; ${document.cookie}`.match(`;\\s*${name}=([^;]+)`)
-    return cookie ? this.deserialize(decodeURIComponent(cookie[1]!)) : null
+    return cookie ? this.#decode(decodeURIComponent(cookie[1]!)) : null
   }
 
-  set<T = string>(name: string, value: T, attributes?: CookieAttributes): void {
+  /**
+   * Set cookie value
+   * @param name cookie name
+   * @param value cookie value
+   * @param attributes cookie attributes
+   */
+  set<T>(name: string, value: T, attributes?: CookieAttributes): void {
     const attr = {
       path: '/',
-      ...this.attributes,
+      ...this.#attributes,
       ...attributes
     }
 
@@ -54,7 +69,7 @@ export class Cookie {
     }
 
     let cookie = `${encodeURIComponent(name)}=${encodeURIComponent(
-      this.serialize(value)
+      this.#encode(value)
     )}`
 
     for (const [key, value] of Object.entries(attr)) {
@@ -67,17 +82,26 @@ export class Cookie {
     document.cookie = cookie
   }
 
-  list<T extends Record<string, any>>(): T | Record<string, any> {
+  /**
+   * Get all cookies
+   * @returns cookie list
+   */
+  list<T extends Record<string, any>>(): T {
     const cookies = document.cookie.split('; ').map((cookie) =>
       cookie.split(/=(.*)/s).map((value, key) => {
         value = decodeURIComponent(value)
-        return key === 0 ? value : this.deserialize(value)
+        return key === 0 ? value : this.#decode(value)
       })
     )
 
     return Object.fromEntries(cookies)
   }
 
+  /**
+   * Delete cookie
+   * @param name cookie name
+   * @param attributes cookie attributes
+   */
   delete(name: string, attributes?: CookieAttributes): void {
     this.set(name, '', { ...attributes, expires: -1 })
   }
