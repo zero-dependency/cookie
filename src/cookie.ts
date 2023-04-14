@@ -36,7 +36,7 @@ export class Cookie {
   /**
    * Get cookie value
    * @param name cookie name
-   * @returns cookie value
+   * @returns cookie value or `null` if cookie does not exist
    */
   get<T>(name: string): T | null {
     const cookie = `; ${document.cookie}`.match(`;\\s*${name}=([^;]+)`)
@@ -85,7 +85,6 @@ export class Cookie {
 
   /**
    * Get all cookies
-   * @returns cookie list
    */
   list<T extends Record<string, any>>(): T {
     const cookies = document.cookie.split('; ').map((cookie) =>
@@ -105,5 +104,13 @@ export class Cookie {
    */
   remove(name: string, attributes?: CookieDomainAttributes): void {
     this.set(name, '', { ...attributes, expires: -1, maxAge: -1 })
+  }
+
+  /**
+   * Check if cookie exists
+   * @param name cookie name
+   */
+  exist(name: string): boolean {
+    return Boolean(this.get(name))
   }
 }
