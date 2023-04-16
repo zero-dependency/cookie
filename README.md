@@ -23,31 +23,31 @@ pnpm add @zero-dependency/cookie
 ```js
 import { Cookie } from '@zero-dependency/cookie'
 
-const cookies = new Cookie(/* options */)
+const cookie = new Cookie({ /* options */ })
 
 // Create a cookie.
-cookies.set('name', 'value')
+cookie.set('name', 'value')
 
 // Create a cookie that expires 7 days from now.
-cookies.set('name', 'value', { expires: 7 })
+cookie.set('name', 'value', { expires: 7 })
 
-// Create an expiring cookie, valid to the path of the current page.
-cookies.set('name', 'value', { expires: 7, path: '' })
+// Create a cookie.
+cookie.get('name')
 
-// Read cookie.
-cookies.get('name')
+// Get all cookies.
+cookie.list()
 
-// Read all visible cookies.
-cookies.list()
+// Check if a cookie exists.
+cookie.has('name')
 
-// Remove cookie.
-cookies.remove('name')
+// Remove a cookie.
+cookie.remove('name')
 
-// Remove a cookie valid to the path of the current page.
-cookies.set('name', 'value', { path: '/some-path' })
-cookies.remove('name'); // fail!
-cookies.remove('name', { path: '/some-path' }); // success!
+// Remove a cookie by passing the exact same path and domain as when the cookie was set.
+cookie.set('name', 'value', { path: '/some-path' })
+cookie.remove('name'); // ❌
+cookie.remove('name', { path: '/some-path' }); // ✅
 
 // Cookie attribute defaults can be set globally.
-cookies.withAttributes({ path: '/', domain: '.example.com' })
+cookie.setAttributes({ path: '/', domain: '.example.com' })
 ```
