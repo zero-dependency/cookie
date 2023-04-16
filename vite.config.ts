@@ -18,6 +18,14 @@ export default defineConfig({
       entry: resolve(__dirname, 'src/index.ts'),
       fileName: (format) => `index.${format}.js`,
       name
+    },
+    rollupOptions: {
+      external: ['@zero-dependency/utils'],
+      output: {
+        globals: {
+          '@zero-dependency/utils': 'utils'
+        }
+      }
     }
   }
 })

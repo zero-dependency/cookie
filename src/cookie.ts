@@ -1,3 +1,4 @@
+import { entries } from '@zero-dependency/utils'
 import type {
   CookieAttributes,
   CookieDomainAttributes,
@@ -12,7 +13,7 @@ export class Cookie<T extends Record<string, any>> {
   #decode: Decode
   #attributes: CookieAttributes
 
-  constructor(options?: CookieOptions) {
+  constructor(options?: CookieOptions<T>) {
     this.#encode = (value) => {
       return options?.encode ? options.encode(value) : value
     }
@@ -23,6 +24,12 @@ export class Cookie<T extends Record<string, any>> {
 
     if (options?.attributes) {
       this.setAttributes(options.attributes)
+    }
+
+    if (options?.initialValues) {
+      for (const value of entries(options.initialValues)) {
+        this.set(...value)
+      }
     }
   }
 
@@ -78,7 +85,7 @@ export class Cookie<T extends Record<string, any>> {
       this.#encode(value)
     )}`
 
-    for (const [key, value] of Object.entries(attr)) {
+    for (const [key, value] of entries(attr)) {
       cookie += `; ${key}`
       if (value !== true) {
         cookie += `=${value}`

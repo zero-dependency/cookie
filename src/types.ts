@@ -2,7 +2,7 @@ export type KeyOf<T> = Extract<keyof T, string>
 export type Encode = (value: any) => string
 export type Decode = (value: string) => any
 
-export interface CookieOptions {
+export interface CookieOptions<T> {
   /**
    * Encode value before setting cookie
    * @default
@@ -25,6 +25,11 @@ export interface CookieOptions {
    * Cookie attribute defaults can be set globally
    */
   attributes?: Omit<CookieAttributes, 'max-age'>
+
+  /**
+   * Set initial cookie values
+   */
+  initialValues?: T
 }
 
 export interface CookieDomainAttributes {
