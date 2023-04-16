@@ -1,3 +1,4 @@
+export type KeyOf<T> = Extract<keyof T, string>
 export type Encode = (value: any) => string
 export type Decode = (value: string) => any
 
