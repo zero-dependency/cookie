@@ -79,10 +79,25 @@ describe('Cookie', (test) => {
     expect(document.cookie).toBe('')
   })
 
-  test('withAttributes', () => {
-    cookie.withAttributes({
+  test('exist', () => {
+    cookie.set('foo', 1)
+    expect(cookie.exist('foo')).toBe(true)
+    expect(cookie.exist('bar')).toBe(false)
+  })
+
+  test('setAttributes', () => {
+    cookie.setAttributes({
       path: '/',
       domain: '.example.com'
     })
+  })
+
+  test('initialValues', () => {
+    const cookie = new Cookie({
+      initialValues: {
+        foo: 'bar'
+      }
+    })
+    expect(cookie.get('foo')).toBe('bar')
   })
 })
