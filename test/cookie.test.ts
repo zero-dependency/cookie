@@ -1,88 +1,94 @@
-import { describe, expect } from 'vitest'
+import { afterEach, describe, expect } from 'vitest'
 import { Cookie } from '../src/index.js'
 
-describe('Cookie', (test) => {
-  // uncovered lines in src/cookie.ts:22-24
-  const withAttributes = new Cookie({
-    encode(value) {
-      return JSON.stringify(value)
-    },
-    decode(value) {
-      try {
-        return JSON.parse(value)
-      } catch {
-        return null
-      }
-    },
-    attributes: {
-      path: '/',
-      domain: '.example.com'
-    }
-  })
-  // uncovered lines in src/cookie.ts:22-24
-
-  const cookie = new Cookie({
-    encode(value) {
-      return JSON.stringify(value)
-    },
-    decode(value) {
-      try {
-        return JSON.parse(value)
-      } catch {
-        return null
-      }
-    }
-  })
-
-  const user = {
-    id: 1,
-    name: 'John'
+afterEach(() => {
+  const cookie = new Cookie()
+  for (const cookieName of Object.keys(cookie.list())) {
+    cookie.remove(cookieName)
   }
+})
 
-  test('cookie instance', () => {
+describe('Cookie', (test) => {
+  test('should be defined', () => {
+    expect(Cookie).toBeDefined()
+  })
+
+  test('should set a cookie', () => {
     const cookie = new Cookie()
-    cookie.set('foo', 1)
-    expect(cookie.get('foo')).toBe('1')
+    cookie.set('foo', 'bar')
+    expect(cookie.get('foo')).toBe('bar')
+  })
+
+  test('should set a cookie with encode and decode', () => {
+    const cookie = new Cookie<{ foo: string[] }>({
+      decode: (value) => {
+        return value.split('.')
+      },
+      encode: (value) => {
+        return value.join('.')
+      }
+    })
+    cookie.set('foo', ['bar', 'baz'])
+    expect(cookie.get('foo')).toEqual(['bar', 'baz'])
+  })
+
+  test('should set a cookie with attributes', () => {
+    const cookie = new Cookie({
+      attributes: {
+        path: '/'
+      }
+    })
+    cookie.set('foo', 'bar')
+    expect(cookie.get('foo')).toBe('bar')
+  })
+
+  test('should set a cookie with initialValues', () => {
+    const cookie = new Cookie({
+      initialValues: {
+        foo: 'bar'
+      }
+    })
+
+    expect(cookie.get('foo')).toBe('bar')
+  })
+
+  test('should set a cookie with options', () => {
+    const cookie = new Cookie()
+    cookie.set('foo', 'bar', { path: '/' })
+    expect(cookie.get('foo')).toBe('bar')
+  })
+
+  test('should get a cookie', () => {
+    const cookie = new Cookie()
+    cookie.set('foo', 'bar')
+    expect(cookie.get('foo')).toBe('bar')
+  })
+
+  test('should get all cookies', () => {
+    const cookie = new Cookie()
+    cookie.set('foo', 'bar')
+    cookie.set('bar', 'baz')
+    expect(cookie.list()).toEqual({ foo: 'bar', bar: 'baz' })
+  })
+
+  test('should remove a cookie', () => {
+    const cookie = new Cookie()
+    cookie.set('foo', 'bar')
     cookie.remove('foo')
+    expect(cookie.get('foo')).toBeNull()
   })
 
-  test('set', () => {
-    expect(document.cookie).toBe('')
-    cookie.set('user', user, { maxAge: 7 })
-    expect(document.cookie).toBe(
-      'user=%7B%22id%22%3A1%2C%22name%22%3A%22John%22%7D'
-    )
+  test('should remove a cookie with options', () => {
+    const cookie = new Cookie()
+    cookie.set('foo', 'bar')
+    cookie.remove('foo', { path: '/' })
+    expect(cookie.get('foo')).toBeNull()
   })
 
-  test('get', () => {
-    expect(cookie.get('user')).toMatchObject(user)
-    expect(cookie.get('unknown')).toBeNull()
-
-    document.cookie = 'empty='
-    document.cookie = 'bad=%7B'
-    expect(cookie.get('empty')).toBeNull()
-    expect(cookie.get('bad')).toBeNull()
-  })
-
-  test('list', () => {
-    expect(cookie.list()).toEqual({
-      user,
-      empty: null,
-      bad: null
-    })
-  })
-
-  test('remove', () => {
-    cookie.remove('bad')
-    cookie.remove('empty')
-    cookie.remove('user')
-    expect(document.cookie).toBe('')
-  })
-
-  test('withAttributes', () => {
-    cookie.withAttributes({
-      path: '/',
-      domain: '.example.com'
-    })
+  test('should exist a cookie', () => {
+    const cookie = new Cookie()
+    cookie.set('foo', 'bar')
+    expect(cookie.has('foo')).toBe(true)
+    expect(cookie.has('bar')).toBe(false)
   })
 })

@@ -1,17 +1,19 @@
+import { entries } from '@zero-dependency/utils'
 import type {
   CookieAttributes,
   CookieDomainAttributes,
   CookieOptions,
   Decode,
-  Encode
+  Encode,
+  KeyOf
 } from './types.js'
 
-export class Cookie {
+export class Cookie<T extends Record<string, any>> {
   #encode: Encode
   #decode: Decode
   #attributes: CookieAttributes
 
-  constructor(options?: CookieOptions) {
+  constructor(options?: CookieOptions<T>) {
     this.#encode = (value) => {
       return options?.encode ? options.encode(value) : value
     }
@@ -21,7 +23,13 @@ export class Cookie {
     }
 
     if (options?.attributes) {
-      this.withAttributes(options.attributes)
+      this.setAttributes(options.attributes)
+    }
+
+    if (options?.initialValues) {
+      for (const value of entries(options.initialValues)) {
+        this.set(...value)
+      }
     }
   }
 
@@ -29,7 +37,7 @@ export class Cookie {
    * Cookie attribute defaults can be set globally
    * @param attributes cookie attributes
    */
-  withAttributes(attributes: Omit<CookieAttributes, 'max-age'>): void {
+  setAttributes(attributes: Omit<CookieAttributes, 'max-age'>): void {
     this.#attributes = { ...this.#attributes, ...attributes }
   }
 
@@ -38,7 +46,7 @@ export class Cookie {
    * @param name cookie name
    * @returns cookie value or `null` if cookie does not exist
    */
-  get<T>(name: string): T | null {
+  get<Name extends KeyOf<T>>(name: Name): T[Name] | null {
     const cookie = `; ${document.cookie}`.match(`;\\s*${name}=([^;]+)`)
     return cookie ? this.#decode(decodeURIComponent(cookie[1]!)) : null
   }
@@ -49,7 +57,11 @@ export class Cookie {
    * @param value cookie value
    * @param attributes cookie attributes
    */
-  set<T>(name: string, value: T, attributes?: CookieAttributes): void {
+  set<Name extends KeyOf<T>>(
+    name: Name,
+    value: T[Name] | null,
+    attributes?: CookieAttributes
+  ): void {
     const attr = {
       path: '/',
       ...this.#attributes,
@@ -73,7 +85,7 @@ export class Cookie {
       this.#encode(value)
     )}`
 
-    for (const [key, value] of Object.entries(attr)) {
+    for (const [key, value] of entries(attr)) {
       cookie += `; ${key}`
       if (value !== true) {
         cookie += `=${value}`
@@ -86,13 +98,16 @@ export class Cookie {
   /**
    * Get all cookies
    */
-  list<T extends Record<string, any>>(): T {
-    const cookies = document.cookie.split('; ').map((cookie) =>
-      cookie.split(/=(.*)/s).map((value, key) => {
-        value = decodeURIComponent(value)
-        return key === 0 ? value : this.#decode(value)
-      })
-    )
+  list<Cookies = T>(): Cookies {
+    const cookies = document.cookie
+      .split('; ')
+      .filter(Boolean)
+      .map((cookie) =>
+        cookie.split(/=(.*)/s).map((value, key) => {
+          value = decodeURIComponent(value)
+          return key === 0 ? value : this.#decode(value)
+        })
+      )
 
     return Object.fromEntries(cookies)
   }
@@ -102,15 +117,18 @@ export class Cookie {
    * @param name cookie name
    * @param attributes cookie domain attributes
    */
-  remove(name: string, attributes?: CookieDomainAttributes): void {
-    this.set(name, '', { ...attributes, expires: -1, maxAge: -1 })
+  remove<Name extends KeyOf<T>>(
+    name: Name,
+    attributes?: CookieDomainAttributes
+  ): void {
+    this.set(name, null, { ...attributes, expires: -1, maxAge: -1 })
   }
 
   /**
    * Check if cookie exists
    * @param name cookie name
    */
-  exist(name: string): boolean {
+  has<Name extends KeyOf<T>>(name: Name): boolean {
     return Boolean(this.get(name))
   }
 }
