@@ -99,12 +99,15 @@ export class Cookie<T extends Record<string, any>> {
    * Get all cookies
    */
   list<Cookies = T>(): Cookies {
-    const cookies = document.cookie.split('; ').map((cookie) =>
-      cookie.split(/=(.*)/s).map((value, key) => {
-        value = decodeURIComponent(value)
-        return key === 0 ? value : this.#decode(value)
-      })
-    )
+    const cookies = document.cookie
+      .split('; ')
+      .filter(Boolean)
+      .map((cookie) =>
+        cookie.split(/=(.*)/s).map((value, key) => {
+          value = decodeURIComponent(value)
+          return key === 0 ? value : this.#decode(value)
+        })
+      )
 
     return Object.fromEntries(cookies)
   }
@@ -125,7 +128,7 @@ export class Cookie<T extends Record<string, any>> {
    * Check if cookie exists
    * @param name cookie name
    */
-  exist<Name extends KeyOf<T>>(name: Name): boolean {
+  has<Name extends KeyOf<T>>(name: Name): boolean {
     return Boolean(this.get(name))
   }
 }
