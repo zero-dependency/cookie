@@ -43,9 +43,16 @@ describe('Cookie', (test) => {
   })
 
   test('should set a cookie with initialValues', () => {
-    const cookie = new Cookie({
+    new Cookie({
       initialValues: {
         foo: 'bar'
+      }
+    })
+
+    const cookie = new Cookie({
+      initialValues: {
+        foo: 'bar2', // skipped
+        bar: 'baz'
       }
     })
 
