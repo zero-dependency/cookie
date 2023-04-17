@@ -42,15 +42,15 @@ describe('Cookie', (test) => {
     expect(cookie.get('foo')).toBe('bar')
   })
 
-  test('should set a cookie with initialValues', () => {
+  test('should set a cookie with initialValue', () => {
     new Cookie({
-      initialValues: {
+      initialValue: {
         foo: 'bar'
       }
     })
 
     const cookie = new Cookie({
-      initialValues: {
+      initialValue: {
         foo: 'bar2', // skipped
         bar: 'baz'
       }

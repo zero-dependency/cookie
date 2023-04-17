@@ -27,9 +27,9 @@ export interface CookieOptions<T> {
   attributes?: Omit<CookieAttributes, 'max-age'>
 
   /**
-   * Set initial cookie values
+   * Set initial cookie value
    */
-  initialValues?: T
+  initialValue?: T
 }
 
 export interface CookieDomainAttributes {

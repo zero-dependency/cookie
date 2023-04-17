@@ -26,8 +26,8 @@ export class Cookie<T extends Record<string, any>> {
       this.setAttributes(options.attributes)
     }
 
-    if (options?.initialValues) {
-      for (const [key, value] of entries(options.initialValues)) {
+    if (options?.initialValue) {
+      for (const [key, value] of entries(options.initialValue)) {
         if (this.has(key)) continue
         this.set(key, value)
       }
