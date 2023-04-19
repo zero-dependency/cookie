@@ -43,20 +43,21 @@ describe('Cookie', (test) => {
   })
 
   test('should set a cookie with initialValue', () => {
-    new Cookie({
+    const cookie = new Cookie({
       initialValue: {
         foo: 'bar'
       }
     })
+    expect(cookie.get('foo')).toBe('bar')
 
-    const cookie = new Cookie({
+    const cookie2 = new Cookie({
       initialValue: {
         foo: 'bar2', // skipped
         bar: 'baz'
       }
     })
-
-    expect(cookie.get('foo')).toBe('bar')
+    expect(cookie2.get('foo')).toBe('bar')
+    expect(cookie2.get('bar')).toBe('baz')
   })
 
   test('should set a cookie with options', () => {
@@ -97,5 +98,17 @@ describe('Cookie', (test) => {
     cookie.set('foo', 'bar')
     expect(cookie.has('foo')).toBe(true)
     expect(cookie.has('bar')).toBe(false)
+  })
+
+  test('set attributes', () => {
+    const cookie = new Cookie({
+      attributes: {
+        expires: 7,
+        path: '/'
+      }
+    })
+    expect(cookie.attributes).toEqual({ expires: 7, path: '/' })
+    cookie.attributes = { expires: 1 }
+    expect(cookie.attributes).toEqual({ expires: 1 })
   })
 })

@@ -24,7 +24,7 @@ export interface CookieOptions<T> {
   /**
    * Cookie attribute defaults can be set globally
    */
-  attributes?: Omit<CookieAttributes, 'max-age'>
+  attributes?: CookieAttributes
 
   /**
    * Set initial cookie value
@@ -40,7 +40,6 @@ export interface CookieDomainAttributes {
 export interface CookieAttributes extends CookieDomainAttributes {
   expires?: Date | number | string
   secure?: boolean
-  maxAge?: number
   'max-age'?: number
   sameSite?: 'Lax' | 'Strict' | 'None'
 }

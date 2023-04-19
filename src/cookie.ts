@@ -22,9 +22,7 @@ export class Cookie<T extends Record<string, any>> {
       return options?.decode ? options.decode(value) : value
     }
 
-    if (options?.attributes) {
-      this.setAttributes(options.attributes)
-    }
+    this.attributes = options?.attributes ?? {}
 
     if (options?.initialValue) {
       for (const [key, value] of entries(options.initialValue)) {
@@ -35,11 +33,19 @@ export class Cookie<T extends Record<string, any>> {
   }
 
   /**
-   * Cookie attribute defaults can be set globally
+   * Get cookie attributes
+   * @returns cookie attributes
+   */
+  get attributes(): CookieAttributes {
+    return this.#attributes
+  }
+
+  /**
+   * Set cookie attributes
    * @param attributes cookie attributes
    */
-  setAttributes(attributes: Omit<CookieAttributes, 'max-age'>): void {
-    this.#attributes = { ...this.#attributes, ...attributes }
+  set attributes(attributes: CookieAttributes) {
+    this.#attributes = attributes
   }
 
   /**
@@ -69,17 +75,14 @@ export class Cookie<T extends Record<string, any>> {
       ...attributes
     }
 
+    // Convert expires number of days to date
     if (typeof attr.expires === 'number') {
       attr.expires = new Date(Date.now() + attr.expires * 864e5)
     }
 
+    // Convert expires date to UTC string
     if (attr.expires instanceof Date) {
       attr.expires = attr.expires.toUTCString()
-    }
-
-    if (attr.maxAge) {
-      attr['max-age'] = attr.maxAge
-      delete attr.maxAge
     }
 
     let cookie = `${encodeURIComponent(name)}=${encodeURIComponent(
@@ -98,6 +101,7 @@ export class Cookie<T extends Record<string, any>> {
 
   /**
    * Get all cookies
+   * @returns all document cookies
    */
   list<Cookies = T>(): Cookies {
     const cookies = document.cookie
@@ -106,6 +110,7 @@ export class Cookie<T extends Record<string, any>> {
       .map((cookie) =>
         cookie.split(/=(.*)/s).map((value, key) => {
           value = decodeURIComponent(value)
+          // key === 0 is the cookie name
           return key === 0 ? value : this.#decode(value)
         })
       )
@@ -122,7 +127,7 @@ export class Cookie<T extends Record<string, any>> {
     name: Name,
     attributes?: CookieDomainAttributes
   ): void {
-    this.set(name, null, { ...attributes, expires: -1, maxAge: -1 })
+    this.set(name, null, { ...attributes, expires: -1 })
   }
 
   /**
