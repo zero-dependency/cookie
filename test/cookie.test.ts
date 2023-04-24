@@ -20,16 +20,30 @@ describe('Cookie', (test) => {
   })
 
   test('should set a cookie with encode and decode', () => {
-    const cookie = new Cookie<{ foo: string[] }>({
-      decode: (value) => {
-        return value.split('.')
+    const cookie = new Cookie<{ foo: string[]; bar: string }>({
+      decode: (value, key) => {
+        if (key === 'foo') {
+          return value.split('.')
+        }
+
+        return value
       },
-      encode: (value) => {
-        return value.join('.')
+      encode: (value, key) => {
+        if (key === 'foo') {
+          return value.join('.')
+        }
+
+        if (key === 'bar') {
+          return value.split('.').join('-')
+        }
       }
     })
+
     cookie.set('foo', ['bar', 'baz'])
     expect(cookie.get('foo')).toEqual(['bar', 'baz'])
+
+    cookie.set('bar', 'bar.baz')
+    expect(cookie.get('bar')).toBe('bar-baz')
   })
 
   test('should set a cookie with attributes', () => {

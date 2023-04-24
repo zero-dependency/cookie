@@ -1,25 +1,17 @@
 export type KeyOf<T> = Extract<keyof T, string>
-export type Encode = (value: any) => string
-export type Decode = (value: string) => any
+export type Encode<T> = (value: any, name: KeyOf<T>) => any
+export type Decode<T> = (value: string, name: KeyOf<T>) => any
 
 export interface CookieOptions<T> {
   /**
    * Encode value before setting cookie
-   * @default
-   * return JSON.stringify(value)
    */
-  encode?: Encode
+  encode?: Encode<T>
 
   /**
-   * @default
-   * try {
-   *   return JSON.parse(value)
-   * } catch (err) {
-   *   console.error(err)
-   *   return null
-   * }
+   * Decode value after getting cookie
    */
-  decode?: Decode
+  decode?: Decode<T>
 
   /**
    * Cookie attribute defaults can be set globally

@@ -8,26 +8,27 @@ import type {
   KeyOf
 } from './types.js'
 
+const defaultCookieParser = (value: any, name: string) => value
+
 export class Cookie<T extends Record<string, any>> {
-  #encode: Encode
-  #decode: Decode
+  #encode: Encode<T>
+  #decode: Decode<T>
   #attributes: CookieAttributes
 
-  constructor(options?: CookieOptions<T>) {
-    this.#encode = (value) => {
-      return options?.encode ? options.encode(value) : value
-    }
+  constructor({
+    encode = defaultCookieParser,
+    decode = defaultCookieParser,
+    attributes = {},
+    initialValue
+  }: CookieOptions<T> = {}) {
+    this.#encode = encode
+    this.#decode = decode
+    this.attributes = attributes
 
-    this.#decode = (value) => {
-      return options?.decode ? options.decode(value) : value
-    }
-
-    this.attributes = options?.attributes ?? {}
-
-    if (options?.initialValue) {
-      for (const [key, value] of entries(options.initialValue)) {
-        if (this.has(key)) continue
-        this.set(key, value)
+    if (initialValue) {
+      for (const [name, value] of entries(initialValue)) {
+        if (this.has(name)) continue
+        this.set(name, value)
       }
     }
   }
@@ -55,7 +56,7 @@ export class Cookie<T extends Record<string, any>> {
    */
   get<Name extends KeyOf<T>>(name: Name): T[Name] | null {
     const cookie = `; ${document.cookie}`.match(`;\\s*${name}=([^;]+)`)
-    return cookie ? this.#decode(decodeURIComponent(cookie[1]!)) : null
+    return cookie ? this.#decode(decodeURIComponent(cookie[1]!), name) : null
   }
 
   /**
@@ -86,11 +87,11 @@ export class Cookie<T extends Record<string, any>> {
     }
 
     let cookie = `${encodeURIComponent(name)}=${encodeURIComponent(
-      this.#encode(value)
+      this.#encode(value, name)
     )}`
 
-    for (const [key, value] of entries(attr)) {
-      cookie += `; ${key}`
+    for (const [name, value] of entries(attr)) {
+      cookie += `; ${name}`
       if (value !== true) {
         cookie += `=${value}`
       }
@@ -104,16 +105,15 @@ export class Cookie<T extends Record<string, any>> {
    * @returns all document cookies
    */
   list<Cookies = T>(): Cookies {
-    const cookies = document.cookie
-      .split('; ')
-      .filter(Boolean)
-      .map((cookie) =>
-        cookie.split(/=(.*)/s).map((value, key) => {
-          value = decodeURIComponent(value)
-          // key === 0 is the cookie name
-          return key === 0 ? value : this.#decode(value)
-        })
-      )
+    const documentCookie = document.cookie
+    const cookieList = documentCookie ? documentCookie.split('; ') : []
+    const cookies = cookieList.map((cookie) => {
+      const [name, value] = cookie.split(/=(.*)/) as [
+        name: KeyOf<T>,
+        value: string
+      ]
+      return [name, this.#decode(decodeURIComponent(value), name)]
+    })
 
     return Object.fromEntries(cookies)
   }
