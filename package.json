@@ -1,6 +1,6 @@
 {
   "name": "@zero-dependency/cookie",
-  "version": "1.10.1",
+  "version": "1.11.0",
   "description": "Cookie parser and serializer",
   "type": "module",
   "types": "./dist/index.d.ts",
