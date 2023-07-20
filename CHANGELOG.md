@@ -1,5 +1,13 @@
 # @zero-dependency/cookie
 
+## 1.13.3
+
+### Patch Changes
+
+- 0ef9a43: chore: test npm provenance
+- Updated dependencies [0ef9a43]
+  - @zero-dependency/utils@1.7.3
+
 ## 1.13.2
 
 ### Patch Changes
