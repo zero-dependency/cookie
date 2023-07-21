@@ -1,5 +1,13 @@
 # @zero-dependency/cookie
 
+## 1.13.4
+
+### Patch Changes
+
+- ci: set node 18
+- Updated dependencies
+  - @zero-dependency/utils@1.7.4
+
 ## 1.13.3
 
 ### Patch Changes
