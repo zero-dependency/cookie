@@ -1,4 +1,5 @@
 import { afterEach, describe, expect } from 'vitest'
+
 import { Cookie } from '../src/index.js'
 
 afterEach(() => {

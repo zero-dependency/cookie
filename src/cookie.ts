@@ -1,4 +1,5 @@
 import { entries } from '@zero-dependency/utils'
+
 import type {
   CookieAttributes,
   CookieDomainAttributes,
