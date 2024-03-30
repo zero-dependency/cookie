@@ -1,6 +1,6 @@
 {
   "name": "@zero-dependency/cookie",
-  "version": "1.13.6",
+  "version": "1.13.7",
   "description": "Cookie parser and serializer",
   "type": "module",
   "types": "./dist/index.d.ts",
@@ -60,6 +60,6 @@
     "vitest": "1.2.2"
   },
   "dependencies": {
-    "@zero-dependency/utils": "workspace:1.7.6"
+    "@zero-dependency/utils": "workspace:1.7.7"
   }
 }
