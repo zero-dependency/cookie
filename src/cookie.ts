@@ -9,7 +9,7 @@ import type {
   KeyOf
 } from './types.js'
 
-const defaultCookieParser = (value: any, name: string) => value
+const defaultCookieParser = (value: any) => value
 
 export class Cookie<T extends Record<string, any>> {
   #encode: Encode<T>
